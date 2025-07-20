@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import AuthModal from './AuthModal'
+import RegionSelector from './RegionSelector'
 
 function Header() {
   const { user, signOut } = useAuth()
@@ -22,6 +23,8 @@ function Header() {
             <Link to="/">Home</Link>
             <Link to="/sets">Browse Sets</Link>
             <Link to="/collection">My Collection</Link>
+            
+            <RegionSelector compact={true} />
             
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
