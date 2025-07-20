@@ -1,0 +1,29 @@
+{
+  "name": "lego-collector",
+  "version": "1.0.0",
+  "description": "Modular LEGO collection management system",
+  "private": true,
+  "scripts": {
+    "fetch-data": "cd apps/fetcher && npm start",
+    "import-data": "cd apps/importer && npm start",
+    "sync-data": "npm run fetch-data && npm run import-data",
+    "migrate": "cd apps/importer && npm run migrate",
+    "dev:api": "cd apps/guide/api && npm run dev",
+    "dev:frontend": "cd apps/guide && npm run dev",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
+    "build": "cd apps/guide && npm run build",
+    "install:all": "npm install && cd apps/fetcher && npm install && cd ../importer && npm install && cd ../guide && npm install && cd api && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "apps/fetcher",
+    "apps/importer", 
+    "apps/guide",
+    "apps/guide/api"
+  ],
+  "keywords": ["lego", "collection", "tracker", "rebrickable"],
+  "author": "",
+  "license": "MIT"
+}

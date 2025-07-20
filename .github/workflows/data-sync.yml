@@ -1,0 +1,58 @@
+name: Daily Data Sync
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  sync-data:
+    name: Sync LEGO Data
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd apps/fetcher && npm ci
+          cd ../importer && npm ci
+
+      - name: Download latest CSV data
+        run: |
+          cd apps/fetcher
+          npm start
+
+      - name: Upload to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Install Supabase CLI
+          curl -fsSL https://supabase.com/install.sh | sh
+          export PATH=$PATH:$HOME/.local/bin
+          
+          # Run migration script
+          node scripts/migrate-to-supabase.js
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Daily Data Sync Failed',
+              body: `The daily data sync workflow failed on ${new Date().toISOString()}.
+              
+              Please check the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
+              labels: ['bug', 'data-sync']
+            })
