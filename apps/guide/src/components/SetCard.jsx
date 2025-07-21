@@ -10,7 +10,23 @@ function SetCard({ set, isOwned, onToggleOwned, showQuickBuy = false }) {
   }
 
   return (
-    <div className="card">
+    <div className="card" style={{ position: 'relative' }}>
+      {/* Clickable overlay for navigation */}
+      <Link 
+        to={`/set/${set.set_num}`}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: '60px', // Stop before buttons area
+          zIndex: 1,
+          textDecoration: 'none',
+          color: 'inherit'
+        }}
+        aria-label={`View details for ${set.name}`}
+      />
+      
       <div style={{ 
         width: '100%', 
         height: '200px', 
@@ -46,13 +62,16 @@ function SetCard({ set, isOwned, onToggleOwned, showQuickBuy = false }) {
         Year: {set.year}<br />
         Parts: {set.num_parts}
       </p>
-      <div style={{ marginTop: '12px' }}>
+      <div style={{ marginTop: '12px', position: 'relative', zIndex: 2 }}>
         <div style={{ display: 'flex', gap: '8px', marginBottom: showQuickBuy ? '8px' : '0' }}>
           <Link to={`/set/${set.set_num}`} className="btn">
             View Details
           </Link>
           <button
-            onClick={() => onToggleOwned(set.set_num)}
+            onClick={(e) => {
+              e.preventDefault()
+              onToggleOwned(set.set_num)
+            }}
             className={`btn ${isOwned ? 'btn-secondary' : ''}`}
           >
             {isOwned ? 'Remove' : 'Add to Collection'}
@@ -62,7 +81,9 @@ function SetCard({ set, isOwned, onToggleOwned, showQuickBuy = false }) {
         {showQuickBuy && (
           <div style={{ display: 'flex', gap: '4px' }}>
             <button
-              onClick={async () => {
+              onClick={async (e) => {
+                e.preventDefault()
+                e.stopPropagation()
                 await trackAffiliateClick(set.set_num, 'amazon', set.name)
                 window.open(AFFILIATE_PARTNERS.amazon.buildUrl(set.name, set.set_num), '_blank')
               }}
@@ -80,7 +101,9 @@ function SetCard({ set, isOwned, onToggleOwned, showQuickBuy = false }) {
               🛒 Amazon
             </button>
             <button
-              onClick={async () => {
+              onClick={async (e) => {
+                e.preventDefault()
+                e.stopPropagation()
                 await trackAffiliateClick(set.set_num, 'legoShop', set.name)
                 window.open(AFFILIATE_PARTNERS.legoShop.buildUrl(set.name, set.set_num), '_blank')
               }}
