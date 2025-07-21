@@ -10,13 +10,18 @@ const port = process.env.PORT || 3001
 app.use(cors())
 app.use(express.json())
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'lego_collector',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres'
-})
+// Database configuration - supports both local and Supabase
+const pool = new Pool(
+  process.env.DATABASE_URL || process.env.SUPABASE_DB_URL ? 
+    { connectionString: process.env.DATABASE_URL || process.env.SUPABASE_DB_URL } :
+    {
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      database: process.env.DB_NAME || 'lego_collector',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres'
+    }
+)
 
 // Health check
 app.get('/health', (req, res) => {
