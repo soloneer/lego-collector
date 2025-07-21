@@ -69,7 +69,11 @@ function SetDetailPage() {
           <div style={{ marginBottom: '24px' }}>
             <p><strong>Set Number:</strong> {set.set_num}</p>
             <p><strong>Year:</strong> {set.year}</p>
-            <p><strong>Parts:</strong> {set.num_parts}</p>
+            {set.num_parts > 0 ? (
+              <p><strong>Parts:</strong> {set.num_parts}</p>
+            ) : (
+              <p><strong>Type:</strong> Sticker Book</p>
+            )}
             <p><strong>Theme:</strong> {set.theme_name || 'Unknown'}</p>
           </div>
           
@@ -264,9 +268,9 @@ function SetDetailPage() {
                               e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0zMiA0NEMzNS4zMTM3IDQ0IDM4IDQxLjMxMzcgMzggMzhDMzggMzQuNjg2MyAzNS4zMTM3IDMyIDMyIDMyQzI4LjY4NjMgMzIgMjYgMzQuNjg2MyAyNiAzOEMyNiA0MS4zMTM3IDI4LjY4NjMgNDQgMzIgNDRaIiBmaWxsPSIjMzc0MTUxIi8+CjxyZWN0IHg9IjI4IiB5PSI0OCIgd2lkdGg9IjgiIGhlaWdodD0iMTIiIGZpbGw9IiMzNzQxNTEiLz4KPHRleHQgeD0iMzIiIHk9IjU4IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjhweCIgZm9udC1mYW1pbHk9IkFyaWFsIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4K'
                             }
                           } else {
-                            // Final SVG fallback
+                            // Final fallback to placeholder image
                             console.log('All fallbacks failed, using placeholder')
-                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0zMiA0NEMzNS4zMTM3IDQ0IDM4IDQxLjMxMzcgMzggMzhDMzggMzQuNjg2MyAzNS4zMTM3IDMyIDMyIDMyQzI4LjY4NjMgMzIgMjYgMzQuNjg2MyAyNiAzOEMyNiA0MS4zMTM3IDI4LjY4NjMgNDQgMzIgNDRaIiBmaWxsPSIjMzc0MTUxIi8+CjxyZWN0IHg9IjI4IiB5PSI0OCIgd2lkdGg9IjgiIGhlaWdodD0iMTIiIGZpbGw9IiMzNzQxNTEiLz4KPHRleHQgeD0iMzIiIHk9IjU4IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjhweCIgZm9udC1mYW1pbHk9IkFyaWFsIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4K'
+                            e.target.src = '/placeholder-minifig.jpg'
                           }
                         }}
                         style={{ 
@@ -292,7 +296,8 @@ function SetDetailPage() {
                       lineHeight: '1.4'
                     }}>
                       <strong>{minifig.fig_num}</strong><br />
-                      {minifig.num_parts > 0 && `Parts: ${minifig.num_parts}`}<br />
+                      {minifig.num_parts > 0 && `Parts: ${minifig.num_parts}`}
+                      {minifig.num_parts > 0 && <br />}
                       Quantity: {minifig.quantity}
                     </p>
                   </div>

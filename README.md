@@ -246,3 +246,43 @@ VITE_AMAZON_AFFILIATE_TAG=your-amazon-tag
 Ready for deployment to production! 🚀
 
 Live at: https://lego-collector-guide-34dy50l0i-andrew-molloys-projects.vercel.app
+
+## 📋 Current Task List (Claude Context)
+
+### ✅ Completed Tasks
+- [x] Fixed missing minifig photos (now uses placeholder-minifig.jpg as final fallback)
+- [x] Hide "Parts:" label when no parts exist (shows "Sticker Book" instead)  
+- [x] Set up GitHub Actions for automated daily data syncing
+- [x] Fixed critical bug in minifig image import (CSV column mapping: img_url vs fig_img_url)
+
+### 🔄 In Progress
+- None
+
+### 📝 Pending Tasks  
+- [ ] Run data import to update minifig images in database
+- [ ] Test minifig image display in production
+- [ ] Add error handling for failed image loads in SetCard component
+- [ ] Implement local image caching strategy
+- [ ] Add analytics dashboard for affiliate link performance
+- [ ] Optimize database queries for large datasets
+- [ ] Add user authentication and personal collections
+- [ ] Implement advanced search and filtering
+
+### 🚧 Technical Debt
+- [ ] Replace SVG fallbacks with proper placeholder images
+- [ ] Optimize bundle size and implement code splitting
+- [ ] Add comprehensive error boundaries
+- [ ] Improve accessibility (ARIA labels, keyboard navigation)
+- [ ] Add TypeScript for better type safety
+
+### 💡 Feature Ideas
+- [ ] Dark mode toggle
+- [ ] Set comparison tool
+- [ ] Wishlist functionality
+- [ ] Price tracking integration
+- [ ] Mobile app (React Native)
+- [ ] Inventory management for parts
+
+---
+
+*Note: This task list helps maintain context across Claude sessions. Update this section when starting new work or completing tasks.*
