@@ -28,6 +28,12 @@ jobs:
       env:
         CSV_SOURCE_URL: ${{ secrets.CSV_SOURCE_URL }}
 
+    - name: Debug network connectivity
+      run: |
+        echo "Testing DNS resolution..."
+        nslookup db.fxtiehnxxnlfaeccejqc.supabase.co || echo "DNS lookup failed"
+        ping -c 2 db.fxtiehnxxnlfaeccejqc.supabase.co || echo "Ping failed"
+        
     - name: Import data to Supabase
       run: npm run import-data
       env:
