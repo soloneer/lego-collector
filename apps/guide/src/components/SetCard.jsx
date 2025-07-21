@@ -104,6 +104,26 @@ function SetCard({ set, isOwned, onToggleOwned, showQuickBuy = false }) {
               onClick={async (e) => {
                 e.preventDefault()
                 e.stopPropagation()
+                await trackAffiliateClick(set.set_num, 'ebay', set.name)
+                window.open(AFFILIATE_PARTNERS.ebay.buildUrl(set.name, set.set_num), '_blank')
+              }}
+              style={{
+                flex: 1,
+                padding: '4px 8px',
+                backgroundColor: AFFILIATE_PARTNERS.ebay.color,
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '11px',
+                cursor: 'pointer'
+              }}
+            >
+              🏷️ eBay
+            </button>
+            <button
+              onClick={async (e) => {
+                e.preventDefault()
+                e.stopPropagation()
                 await trackAffiliateClick(set.set_num, 'legoShop', set.name)
                 window.open(AFFILIATE_PARTNERS.legoShop.buildUrl(set.name, set.set_num), '_blank')
               }}

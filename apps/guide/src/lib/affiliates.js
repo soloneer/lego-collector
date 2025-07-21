@@ -108,6 +108,15 @@ export const AFFILIATE_PARTNERS = {
     buildUrl: (setName, setNum) => {
       return `https://www.brickowl.com/search/catalog?query=${encodeURIComponent(setNum)}`
     }
+  },
+  ebay: {
+    name: 'eBay',
+    logo: '🏷️',
+    color: '#0064d2',
+    buildUrl: (setName, setNum) => {
+      const query = encodeURIComponent(`LEGO ${setName} ${setNum}`)
+      return `https://www.ebay.com/sch/i.html?_nkw=${query}&_sacat=0&LH_BIN=1&_sop=15`
+    }
   }
 }
 
@@ -154,6 +163,9 @@ export const getFeaturedAffiliatePartners = (set) => {
   if (set.num_parts > 1000 || set.year >= 2022) {
     suggestions.push('amazon')
   }
+  
+  // Suggest eBay for variety and competitive pricing
+  suggestions.push('ebay')
   
   // Suggest BrickLink for older/retired sets
   if (set.year < 2020) {

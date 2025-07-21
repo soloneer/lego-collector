@@ -1,0 +1,51 @@
+{
+  "tables": {
+    "themes": {
+      "rows": 464,
+      "total": 464,
+      "success": true
+    },
+    "colors": {
+      "rows": 272,
+      "total": 272,
+      "success": true
+    },
+    "part_categories": {
+      "rows": 76,
+      "total": 76,
+      "success": true
+    },
+    "parts": {
+      "rows": 58863,
+      "total": 58863,
+      "success": true
+    },
+    "sets": {
+      "rows": 25072,
+      "total": 25072,
+      "success": true
+    },
+    "inventories": {
+      "rows": 26888,
+      "total": 26888,
+      "success": true
+    },
+    "minifigs": {
+      "rows": 15805,
+      "total": 15805,
+      "success": true
+    },
+    "inventory_parts": {
+      "rows": 988613,
+      "total": 988613,
+      "success": true
+    },
+    "inventory_minifigs": {
+      "rows": 23488,
+      "total": 23488,
+      "success": true
+    }
+  },
+  "startTime": "2025-07-21T09:13:38.349Z",
+  "errors": []
+}

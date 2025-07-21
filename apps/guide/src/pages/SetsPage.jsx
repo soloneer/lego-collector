@@ -182,6 +182,7 @@ function SetsPage() {
                 set={set}
                 isOwned={ownedSets.includes(set.set_num)}
                 onToggleOwned={toggleOwned}
+                showQuickBuy={true}
               />
             ))}
           </div>
