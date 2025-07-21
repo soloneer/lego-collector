@@ -188,14 +188,19 @@ function SetDetailPage() {
           {minifigs.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
               {minifigs.map((minifig, index) => {
-                // Try multiple image URL strategies
+                // Build image URL using multiple strategies
                 const buildImageUrl = () => {
                   console.log('Minifig data:', minifig) // Debug log
                   
-                  // Start with BrickLink as primary since Rebrickable images might be missing
-                  // BrickLink has more reliable minifig images
+                  // Use database image URL if available
+                  if (minifig.fig_img_url && minifig.fig_img_url.trim() !== '') {
+                    console.log('Using database URL:', minifig.fig_img_url)
+                    return minifig.fig_img_url
+                  }
+                  
+                  // Fallback to constructed BrickLink URL
                   const url = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
-                  console.log('Using BrickLink primary:', url)
+                  console.log('Using constructed BrickLink URL:', url)
                   return url
                 }
                 
