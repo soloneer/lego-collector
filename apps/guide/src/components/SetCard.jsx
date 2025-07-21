@@ -60,7 +60,7 @@ function SetCard({ set, isOwned, onToggleOwned, showQuickBuy = false }) {
       <p>
         Set: {set.set_num}<br />
         Year: {set.year}<br />
-{set.num_parts > 0 ? `Parts: ${set.num_parts}` : 'Sticker Book'}
+{set.num_parts > 0 && `Parts: ${set.num_parts}`}
       </p>
       <div style={{ marginTop: '12px', position: 'relative', zIndex: 2 }}>
         <div style={{ display: 'flex', gap: '8px', marginBottom: showQuickBuy ? '8px' : '0' }}>

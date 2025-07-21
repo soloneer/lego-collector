@@ -69,10 +69,8 @@ function SetDetailPage() {
           <div style={{ marginBottom: '24px' }}>
             <p><strong>Set Number:</strong> {set.set_num}</p>
             <p><strong>Year:</strong> {set.year}</p>
-            {set.num_parts > 0 ? (
+{set.num_parts > 0 && (
               <p><strong>Parts:</strong> {set.num_parts}</p>
-            ) : (
-              <p><strong>Type:</strong> Sticker Book</p>
             )}
             <p><strong>Theme:</strong> {set.theme_name || 'Unknown'}</p>
           </div>
@@ -192,20 +190,16 @@ function SetDetailPage() {
           {minifigs.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
               {minifigs.map((minifig, index) => {
-                // Build image URL using multiple strategies
+                // Build image URL - use database URL or fallback to placeholder
                 const buildImageUrl = () => {
-                  console.log('Minifig data:', minifig) // Debug log
-                  
-                  // Use database image URL if available
+                  // Use database image URL if available (Rebrickable URLs)
                   if (minifig.fig_img_url && minifig.fig_img_url.trim() !== '') {
-                    console.log('Using database URL:', minifig.fig_img_url)
                     return minifig.fig_img_url
                   }
                   
-                  // Fallback to constructed BrickLink URL
-                  const url = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
-                  console.log('Using constructed BrickLink URL:', url)
-                  return url
+                  // Skip BrickLink fallback - Rebrickable and BrickLink use different ID systems
+                  // fig-016151 (Rebrickable) ≠ son029 (BrickLink)
+                  return '/placeholder-minifig.jpg'
                 }
                 
                 return (
