@@ -190,10 +190,13 @@ function SetDetailPage() {
           {minifigs.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
               {minifigs.map((minifig, index) => {
-                // Use placeholder until we solve Rebrickable image ID system
+                // Use actual CSV image URLs - they DO work! 
                 const buildImageUrl = () => {
-                  // Rebrickable requires specific image IDs we don't have
-                  // e.g. fig-015870 needs ID 154296 for proper URL
+                  // Use database image URL from CSV import
+                  if (minifig.fig_img_url && minifig.fig_img_url.trim() !== '') {
+                    return minifig.fig_img_url
+                  }
+                  // Fallback to placeholder for missing URLs
                   return '/placeholder-minifig.jpg'
                 }
                 
