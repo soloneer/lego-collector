@@ -244,3 +244,5 @@ VITE_AMAZON_AFFILIATE_TAG=your-amazon-tag
 - **Production**: https://lego.collector.guide (after deployment)
 
 Ready for deployment to production! 🚀
+
+Live at: https://lego-collector-guide-34dy50l0i-andrew-molloys-projects.vercel.app
