@@ -186,27 +186,71 @@ function SetDetailPage() {
         <div>
           <h3 style={{ marginBottom: '16px' }}>Minifigures</h3>
           {minifigs.length > 0 ? (
-            <div className="grid grid-4">
-              {minifigs.map((minifig, index) => (
-                <div key={index} className="card">
-                  <img 
-                    src={minifig.fig_img_url || '/placeholder-minifig.jpg'}
-                    alt={minifig.fig_name}
-                    onError={(e) => {
-                      e.target.src = '/placeholder-minifig.jpg'
-                    }}
-                    style={{ width: '100%', height: '200px', objectFit: 'contain', backgroundColor: '#f8f8f8' }}
-                  />
-                  <h3 style={{ fontSize: '16px', margin: '8px 0', color: '#333' }}>
-                    {minifig.fig_name}
-                  </h3>
-                  <p style={{ fontSize: '14px', color: '#666', margin: '4px 0' }}>
-                    {minifig.fig_num}<br />
-                    {minifig.num_parts && `Parts: ${minifig.num_parts}`}<br />
-                    Quantity: {minifig.quantity}
-                  </p>
-                </div>
-              ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
+              {minifigs.map((minifig, index) => {
+                const imgUrl = minifig.fig_img_url ? 
+                  (minifig.fig_img_url.startsWith('http') ? minifig.fig_img_url : `https://cdn.rebrickable.com${minifig.fig_img_url}`) :
+                  `https://cdn.rebrickable.com/media/sets/${minifig.fig_num.split('-')[0]}/fig.jpg`
+                
+                return (
+                  <div key={`minifig-${minifig.fig_num}-${index}`} style={{
+                    background: 'white',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ 
+                      width: '100%', 
+                      height: '200px', 
+                      backgroundColor: '#f8f8f8',
+                      borderRadius: '4px',
+                      marginBottom: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <img 
+                        src={imgUrl}
+                        alt={minifig.fig_name || 'Minifigure'}
+                        onError={(e) => {
+                          if (!e.target.dataset.fallbackTried) {
+                            e.target.dataset.fallbackTried = 'true'
+                            e.target.src = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
+                          } else if (!e.target.dataset.fallbackTried2) {
+                            e.target.dataset.fallbackTried2 = 'true'
+                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0yNiAzNkM2IDM2IDYgMzQgMzIgMzRDMzggMzQgMzggMzYgMzggMzZaIiBmaWxsPSIjMzc0MTUxIi8+CjxjaXJjbGUgY3g9IjI2IiBjeT0iMzAiIHI9IjIiIGZpbGw9IiMzNzQxNTEiLz4KPGNpcmNsZSBjeD0iMzgiIGN5PSIzMCIgcj0iMiIgZmlsbD0iIzM3NDE1MSIvPgo8L3N2Zz4K'
+                          }
+                        }}
+                        style={{ 
+                          maxWidth: '100%', 
+                          maxHeight: '100%', 
+                          objectFit: 'contain'
+                        }}
+                      />
+                    </div>
+                    <h4 style={{ 
+                      fontSize: '16px', 
+                      margin: '0 0 8px 0', 
+                      color: '#333',
+                      fontWeight: '500',
+                      lineHeight: '1.3'
+                    }}>
+                      {minifig.fig_name || 'Unknown Minifigure'}
+                    </h4>
+                    <p style={{ 
+                      fontSize: '14px', 
+                      color: '#666', 
+                      margin: '0',
+                      lineHeight: '1.4'
+                    }}>
+                      <strong>{minifig.fig_num}</strong><br />
+                      {minifig.num_parts > 0 && `Parts: ${minifig.num_parts}`}<br />
+                      Quantity: {minifig.quantity}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           ) : (
             <p style={{ color: '#666' }}>No minifigures included in this set.</p>

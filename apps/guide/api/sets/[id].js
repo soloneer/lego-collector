@@ -67,7 +67,7 @@ export default async function handler(req, res) {
 
     // Get minifigs
     const minifigsResult = await pool.query(`
-      SELECT m.fig_num, m.name as fig_name, m.fig_img_url,
+      SELECT m.fig_num, m.name as fig_name, m.fig_img_url, m.num_parts,
              im.quantity
       FROM inventory_minifigs im
       JOIN minifigs m ON im.fig_num = m.fig_num
