@@ -192,27 +192,10 @@ function SetDetailPage() {
                 const buildImageUrl = () => {
                   console.log('Minifig data:', minifig) // Debug log
                   
-                  // Strategy 1: Use provided URL if available
-                  if (minifig.fig_img_url) {
-                    const url = minifig.fig_img_url.startsWith('http') ? 
-                      minifig.fig_img_url : 
-                      `https://cdn.rebrickable.com${minifig.fig_img_url}`
-                    console.log('Using database URL:', url)
-                    return url
-                  }
-                  
-                  // Strategy 2: Construct URL from fig_num
-                  // Many minifig URLs follow pattern: /media/sets/{set_num}/{fig_num}.jpg
-                  const figParts = minifig.fig_num.split('-')
-                  if (figParts.length >= 2) {
-                    const url = `https://cdn.rebrickable.com/media/sets/${figParts[0]}/${minifig.fig_num}.jpg`
-                    console.log('Using constructed set URL:', url)
-                    return url
-                  }
-                  
-                  // Strategy 3: Try direct pattern
-                  const url = `https://cdn.rebrickable.com/media/minifigs/${minifig.fig_num}.jpg`
-                  console.log('Using direct minifig URL:', url)
+                  // Start with BrickLink as primary since Rebrickable images might be missing
+                  // BrickLink has more reliable minifig images
+                  const url = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
+                  console.log('Using BrickLink primary:', url)
                   return url
                 }
                 
