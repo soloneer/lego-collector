@@ -6,6 +6,8 @@ function SetsPage() {
   const [sets, setSets] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [totalResults, setTotalResults] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState({
     search: '',
     year: '',
@@ -15,6 +17,8 @@ function SetsPage() {
   })
   const [themes, setThemes] = useState([])
   const { ownedSets, toggleOwned } = useSupabaseCollection()
+
+  const ITEMS_PER_PAGE = 50
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -41,10 +45,14 @@ function SetsPage() {
           if (value) params.append(key, value)
         })
         
+        params.append('limit', ITEMS_PER_PAGE)
+        params.append('offset', (currentPage - 1) * ITEMS_PER_PAGE)
+        
         const response = await fetch(`/api/sets?${params}`)
         if (!response.ok) throw new Error('Failed to fetch sets')
         const data = await response.json()
-        setSets(data)
+        setSets(data.sets || data) // Handle both old and new response format
+        setTotalResults(data.total || data.length)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -54,10 +62,50 @@ function SetsPage() {
 
     const debounceTimer = setTimeout(fetchSets, 300)
     return () => clearTimeout(debounceTimer)
-  }, [filters])
+  }, [filters, currentPage])
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }))
+    setCurrentPage(1) // Reset to first page when filters change
+  }
+
+  const totalPages = Math.ceil(totalResults / ITEMS_PER_PAGE)
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null
+
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        gap: '8px',
+        marginTop: '32px',
+        marginBottom: '32px'
+      }}>
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="btn btn-secondary"
+          style={{ opacity: currentPage === 1 ? 0.5 : 1 }}
+        >
+          Previous
+        </button>
+        
+        <span style={{ color: '#666', fontSize: '14px' }}>
+          Page {currentPage} of {totalPages} ({totalResults.toLocaleString()} sets)
+        </span>
+        
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="btn btn-secondary"
+          style={{ opacity: currentPage === totalPages ? 0.5 : 1 }}
+        >
+          Next
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -92,9 +140,9 @@ function SetsPage() {
               onChange={(e) => handleFilterChange('theme', e.target.value)}
             >
               <option value="">All Themes</option>
-              {themes.map(theme => (
-                <option key={theme.id} value={theme.id}>
-                  {theme.name}
+              {themes.map((themeName, index) => (
+                <option key={index} value={themeName}>
+                  {themeName}
                 </option>
               ))}
             </select>
@@ -125,9 +173,8 @@ function SetsPage() {
       
       {!loading && !error && (
         <>
-          <p style={{ marginBottom: '16px', color: '#666' }}>
-            Found {sets.length} sets
-          </p>
+          {renderPagination()}
+          
           <div className="grid grid-3">
             {sets.map(set => (
               <SetCard
@@ -138,6 +185,8 @@ function SetsPage() {
               />
             ))}
           </div>
+          
+          {renderPagination()}
         </>
       )}
       
