@@ -190,16 +190,11 @@ function SetDetailPage() {
           {minifigs.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
               {minifigs.map((minifig, index) => {
-                // Build image URL with multiple Rebrickable patterns
+                // Use placeholder until we solve Rebrickable image ID system
                 const buildImageUrl = () => {
-                  // Try database URL first (basic Rebrickable pattern)
-                  if (minifig.fig_img_url && minifig.fig_img_url.trim() !== '') {
-                    return minifig.fig_img_url
-                  }
-                  
-                  // Try thumbnail pattern that user found working
-                  // https://cdn.rebrickable.com/media/thumbs/sets/fig-015870/154296.jpg/800x800p.jpg
-                  return `https://cdn.rebrickable.com/media/thumbs/sets/${minifig.fig_num}/image.jpg/800x800p.jpg`
+                  // Rebrickable requires specific image IDs we don't have
+                  // e.g. fig-015870 needs ID 154296 for proper URL
+                  return '/placeholder-minifig.jpg'
                 }
                 
                 return (
@@ -224,16 +219,9 @@ function SetDetailPage() {
                         src={buildImageUrl()}
                         alt={minifig.fig_name || 'Minifigure'}
                         onError={(e) => {
-                          if (!e.target.dataset.fallback1) {
-                            e.target.dataset.fallback1 = 'true'
-                            // Try Rebrickable minifig API pattern
-                            e.target.src = `https://cdn.rebrickable.com/media/thumbs/minifigs/${minifig.fig_num}.jpg/250x250p.jpg`
-                          } else if (!e.target.dataset.fallback2) {
-                            e.target.dataset.fallback2 = 'true'
-                            // Try direct Rebrickable pattern  
-                            e.target.src = `https://cdn.rebrickable.com/media/minifigs/${minifig.fig_num}.jpg`
-                          } else if (!e.target.dataset.fallback3) {
-                            e.target.dataset.fallback3 = 'true'
+                          // Placeholder should always work, but just in case
+                          if (!e.target.dataset.fallbackAttempted) {
+                            e.target.dataset.fallbackAttempted = 'true'
                             e.target.src = '/placeholder-minifig.jpg'
                           }
                         }}
