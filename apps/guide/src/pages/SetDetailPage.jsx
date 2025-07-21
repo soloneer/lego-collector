@@ -188,9 +188,26 @@ function SetDetailPage() {
           {minifigs.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
               {minifigs.map((minifig, index) => {
-                const imgUrl = minifig.fig_img_url ? 
-                  (minifig.fig_img_url.startsWith('http') ? minifig.fig_img_url : `https://cdn.rebrickable.com${minifig.fig_img_url}`) :
-                  `https://cdn.rebrickable.com/media/sets/${minifig.fig_num.split('-')[0]}/fig.jpg`
+                // Try multiple image URL strategies
+                const buildImageUrl = () => {
+                  // Strategy 1: Use provided URL if available
+                  if (minifig.fig_img_url) {
+                    if (minifig.fig_img_url.startsWith('http')) {
+                      return minifig.fig_img_url
+                    }
+                    return `https://cdn.rebrickable.com${minifig.fig_img_url}`
+                  }
+                  
+                  // Strategy 2: Construct URL from fig_num
+                  // Many minifig URLs follow pattern: /media/sets/{set_num}/{fig_num}.jpg
+                  const figParts = minifig.fig_num.split('-')
+                  if (figParts.length >= 2) {
+                    return `https://cdn.rebrickable.com/media/sets/${figParts[0]}/${minifig.fig_num}.jpg`
+                  }
+                  
+                  // Strategy 3: Try direct pattern
+                  return `https://cdn.rebrickable.com/media/minifigs/${minifig.fig_num}.jpg`
+                }
                 
                 return (
                   <div key={`minifig-${minifig.fig_num}-${index}`} style={{
@@ -211,14 +228,23 @@ function SetDetailPage() {
                       justifyContent: 'center'
                     }}>
                       <img 
-                        src={imgUrl}
+                        src={buildImageUrl()}
                         alt={minifig.fig_name || 'Minifigure'}
                         onError={(e) => {
-                          if (!e.target.dataset.fallbackTried) {
-                            e.target.dataset.fallbackTried = 'true'
+                          if (!e.target.dataset.fallback1) {
+                            e.target.dataset.fallback1 = 'true'
+                            // Try BrickLink
                             e.target.src = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
-                          } else if (!e.target.dataset.fallbackTried2) {
-                            e.target.dataset.fallbackTried2 = 'true'
+                          } else if (!e.target.dataset.fallback2) {
+                            e.target.dataset.fallback2 = 'true'
+                            // Try alternative BrickLink URL
+                            e.target.src = `https://img.bricklink.com/ItemImage/ML/${minifig.fig_num}.png`
+                          } else if (!e.target.dataset.fallback3) {
+                            e.target.dataset.fallback3 = 'true'
+                            // Try Rebrickable direct minifig URL
+                            e.target.src = `https://cdn.rebrickable.com/media/thumbs/minifigs/${minifig.fig_num}.jpg/250x250p.jpg`
+                          } else {
+                            // Final SVG fallback
                             e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0yNiAzNkM2IDM2IDYgMzQgMzIgMzRDMzggMzQgMzggMzYgMzggMzZaIiBmaWxsPSIjMzc0MTUxIi8+CjxjaXJjbGUgY3g9IjI2IiBjeT0iMzAiIHI9IjIiIGZpbGw9IiMzNzQxNTEiLz4KPGNpcmNsZSBjeD0iMzgiIGN5PSIzMCIgcj0iMiIgZmlsbD0iIzM3NDE1MSIvPgo8L3N2Zz4K'
                           }
                         }}
