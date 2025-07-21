@@ -1,13 +1,7 @@
 {
   "functions": {
-    "apps/guide/api/server.js": {
+    "api/**/*.js": {
       "maxDuration": 30
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/apps/guide/api/server.js"
-    }
-  ]
+  }
 }
