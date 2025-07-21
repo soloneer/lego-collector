@@ -18,21 +18,17 @@ function SetDetailPage() {
       try {
         setLoading(true)
         
-        const [setResponse, partsResponse, minifigsResponse] = await Promise.all([
-          fetch(`/api/sets/${setNum}`),
-          fetch(`/api/sets/${setNum}/parts`),
-          fetch(`/api/sets/${setNum}/minifigs`)
-        ])
+        const response = await fetch(`/api/sets/${setNum}`)
         
-        if (!setResponse.ok) throw new Error('Set not found')
+        if (!response.ok) {
+          throw new Error('Set not found')
+        }
         
-        const setData = await setResponse.json()
-        const partsData = partsResponse.ok ? await partsResponse.json() : []
-        const minifigsData = minifigsResponse.ok ? await minifigsResponse.json() : []
+        const data = await response.json()
         
-        setSet(setData)
-        setParts(partsData)
-        setMinifigs(minifigsData)
+        setSet(data.set)
+        setParts(data.parts || [])
+        setMinifigs(data.minifigs || [])
       } catch (err) {
         setError(err.message)
       } finally {
