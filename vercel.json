@@ -1,7 +1,19 @@
 {
+  "buildCommand": "cd apps/guide && npm run build",
+  "outputDirectory": "apps/guide/dist",
   "functions": {
     "api/**/*.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/apps/guide/dist/$1"
+    }
+  ]
 }
