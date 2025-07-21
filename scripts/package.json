@@ -1,0 +1,10 @@
+{
+  "name": "lego-collector-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "csv-parse": "^5.5.2",
+    "pg": "^8.11.3"
+  }
+}

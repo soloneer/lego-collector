@@ -35,12 +35,8 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          # Install Supabase CLI
-          curl -fsSL https://supabase.com/install.sh | sh
-          export PATH=$PATH:$HOME/.local/bin
-          
-          # Run migration script
-          node scripts/migrate-to-supabase.js
+          # Run migration script (no local DB needed, uses downloaded CSVs)
+          cd scripts && npm install && node migrate-csv-to-supabase.js
 
       - name: Notify on failure
         if: failure()
