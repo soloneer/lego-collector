@@ -190,23 +190,30 @@ function SetDetailPage() {
               {minifigs.map((minifig, index) => {
                 // Try multiple image URL strategies
                 const buildImageUrl = () => {
+                  console.log('Minifig data:', minifig) // Debug log
+                  
                   // Strategy 1: Use provided URL if available
                   if (minifig.fig_img_url) {
-                    if (minifig.fig_img_url.startsWith('http')) {
-                      return minifig.fig_img_url
-                    }
-                    return `https://cdn.rebrickable.com${minifig.fig_img_url}`
+                    const url = minifig.fig_img_url.startsWith('http') ? 
+                      minifig.fig_img_url : 
+                      `https://cdn.rebrickable.com${minifig.fig_img_url}`
+                    console.log('Using database URL:', url)
+                    return url
                   }
                   
                   // Strategy 2: Construct URL from fig_num
                   // Many minifig URLs follow pattern: /media/sets/{set_num}/{fig_num}.jpg
                   const figParts = minifig.fig_num.split('-')
                   if (figParts.length >= 2) {
-                    return `https://cdn.rebrickable.com/media/sets/${figParts[0]}/${minifig.fig_num}.jpg`
+                    const url = `https://cdn.rebrickable.com/media/sets/${figParts[0]}/${minifig.fig_num}.jpg`
+                    console.log('Using constructed set URL:', url)
+                    return url
                   }
                   
                   // Strategy 3: Try direct pattern
-                  return `https://cdn.rebrickable.com/media/minifigs/${minifig.fig_num}.jpg`
+                  const url = `https://cdn.rebrickable.com/media/minifigs/${minifig.fig_num}.jpg`
+                  console.log('Using direct minifig URL:', url)
+                  return url
                 }
                 
                 return (
@@ -231,21 +238,47 @@ function SetDetailPage() {
                         src={buildImageUrl()}
                         alt={minifig.fig_name || 'Minifigure'}
                         onError={(e) => {
+                          console.log('Image failed:', e.target.src)
                           if (!e.target.dataset.fallback1) {
                             e.target.dataset.fallback1 = 'true'
-                            // Try BrickLink
-                            e.target.src = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
+                            // Try BrickLink minifig format
+                            const newUrl = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num}.png`
+                            console.log('Trying BrickLink MN:', newUrl)
+                            e.target.src = newUrl
                           } else if (!e.target.dataset.fallback2) {
                             e.target.dataset.fallback2 = 'true'
-                            // Try alternative BrickLink URL
-                            e.target.src = `https://img.bricklink.com/ItemImage/ML/${minifig.fig_num}.png`
+                            // Try alternative BrickLink format
+                            const newUrl = `https://img.bricklink.com/ItemImage/ML/${minifig.fig_num}.png`
+                            console.log('Trying BrickLink ML:', newUrl)
+                            e.target.src = newUrl
                           } else if (!e.target.dataset.fallback3) {
                             e.target.dataset.fallback3 = 'true'
-                            // Try Rebrickable direct minifig URL
-                            e.target.src = `https://cdn.rebrickable.com/media/thumbs/minifigs/${minifig.fig_num}.jpg/250x250p.jpg`
+                            // Try Rebrickable thumbnails
+                            const newUrl = `https://cdn.rebrickable.com/media/thumbs/minifigs/${minifig.fig_num}.jpg/250x250p.jpg`
+                            console.log('Trying Rebrickable thumbnail:', newUrl)
+                            e.target.src = newUrl
+                          } else if (!e.target.dataset.fallback4) {
+                            e.target.dataset.fallback4 = 'true'
+                            // Try another BrickLink pattern
+                            const newUrl = `https://img.bricklink.com/ItemImage/MN/0/${minifig.fig_num.replace(/-/g, '_')}.png`
+                            console.log('Trying BrickLink underscore:', newUrl)
+                            e.target.src = newUrl
+                          } else if (!e.target.dataset.fallback5) {
+                            e.target.dataset.fallback5 = 'true'
+                            // Try known working example pattern
+                            const figParts = minifig.fig_num.split('-')
+                            if (figParts.length >= 2) {
+                              const newUrl = `https://cdn.rebrickable.com/media/minifigs/${figParts[0]}/${minifig.fig_num}.jpg`
+                              console.log('Trying set-specific pattern:', newUrl)
+                              e.target.src = newUrl
+                            } else {
+                              // Skip to final fallback
+                              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0zMiA0NEMzNS4zMTM3IDQ0IDM4IDQxLjMxMzcgMzggMzhDMzggMzQuNjg2MyAzNS4zMTM3IDMyIDMyIDMyQzI4LjY4NjMgMzIgMjYgMzQuNjg2MyAyNiAzOEMyNiA0MS4zMTM3IDI4LjY4NjMgNDQgMzIgNDRaIiBmaWxsPSIjMzc0MTUxIi8+CjxyZWN0IHg9IjI4IiB5PSI0OCIgd2lkdGg9IjgiIGhlaWdodD0iMTIiIGZpbGw9IiMzNzQxNTEiLz4KPHRleHQgeD0iMzIiIHk9IjU4IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjhweCIgZm9udC1mYW1pbHk9IkFyaWFsIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4K'
+                            }
                           } else {
                             // Final SVG fallback
-                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0yNiAzNkM2IDM2IDYgMzQgMzIgMzRDMzggMzQgMzggMzYgMzggMzZaIiBmaWxsPSIjMzc0MTUxIi8+CjxjaXJjbGUgY3g9IjI2IiBjeT0iMzAiIHI9IjIiIGZpbGw9IiMzNzQxNTEiLz4KPGNpcmNsZSBjeD0iMzgiIGN5PSIzMCIgcj0iMiIgZmlsbD0iIzM3NDE1MSIvPgo8L3N2Zz4K'
+                            console.log('All fallbacks failed, using placeholder')
+                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMEM0My4wNDU3IDIwIDUyIDI4Ljk1NDMgNTIgNDBDNTIgNTEuMDQ1NyA0My4wNDU3IDYwIDMyIDYwQzIwLjk1NDMgNjAgMTIgNTEuMDQ1NyAxMiA0MEMxMiAyOC45NTQzIDIwLjk1NDMgMjAgMzIgMjBaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0zMiA0NEMzNS4zMTM3IDQ0IDM4IDQxLjMxMzcgMzggMzhDMzggMzQuNjg2MyAzNS4zMTM3IDMyIDMyIDMyQzI4LjY4NjMgMzIgMjYgMzQuNjg2MyAyNiAzOEMyNiA0MS4zMTM3IDI4LjY4NjMgNDQgMzIgNDRaIiBmaWxsPSIjMzc0MTUxIi8+CjxyZWN0IHg9IjI4IiB5PSI0OCIgd2lkdGg9IjgiIGhlaWdodD0iMTIiIGZpbGw9IiMzNzQxNTEiLz4KPHRleHQgeD0iMzIiIHk9IjU4IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjhweCIgZm9udC1mYW1pbHk9IkFyaWFsIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4K'
                           }
                         }}
                         style={{ 
