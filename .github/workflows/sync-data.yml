@@ -28,16 +28,32 @@ jobs:
       env:
         CSV_SOURCE_URL: ${{ secrets.CSV_SOURCE_URL }}
 
-    - name: Debug network connectivity
+    - name: Debug network connectivity and get IPv4
       run: |
         echo "Testing DNS resolution..."
         nslookup db.fxtiehnxxnlfaeccejqc.supabase.co || echo "DNS lookup failed"
-        ping -c 2 db.fxtiehnxxnlfaeccejqc.supabase.co || echo "Ping failed"
+        
+        echo "Getting IPv4 address..."
+        IPV4_ADDR=$(dig +short -4 db.fxtiehnxxnlfaeccejqc.supabase.co | head -1)
+        echo "IPv4 Address: $IPV4_ADDR"
+        
+        if [ ! -z "$IPV4_ADDR" ]; then
+          echo "Testing IPv4 connectivity..."
+          ping -c 2 $IPV4_ADDR || echo "IPv4 ping failed"
+          
+          # Extract password from original DATABASE_URL and create IPv4-only version
+          PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*postgres:\([^@]*\)@.*/\1/p')
+          IPV4_DATABASE_URL="postgresql://postgres:$PASSWORD@$IPV4_ADDR:5432/postgres"
+          echo "DATABASE_URL_IPV4=$IPV4_DATABASE_URL" >> $GITHUB_ENV
+          echo "Using IPv4 DATABASE_URL"
+        else
+          echo "Could not resolve IPv4 address"
+        fi
         
     - name: Import data to Supabase
       run: npm run import-data
       env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_URL: ${{ env.DATABASE_URL_IPV4 || secrets.DATABASE_URL }}
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
