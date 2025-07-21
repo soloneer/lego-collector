@@ -191,15 +191,18 @@ function SetDetailPage() {
                 <div key={index} className="card">
                   <img 
                     src={minifig.fig_img_url || '/placeholder-minifig.jpg'}
-                    alt={minifig.name}
+                    alt={minifig.fig_name}
                     onError={(e) => {
                       e.target.src = '/placeholder-minifig.jpg'
                     }}
+                    style={{ width: '100%', height: '200px', objectFit: 'contain', backgroundColor: '#f8f8f8' }}
                   />
-                  <h3>{minifig.name}</h3>
-                  <p>
+                  <h3 style={{ fontSize: '16px', margin: '8px 0', color: '#333' }}>
+                    {minifig.fig_name}
+                  </h3>
+                  <p style={{ fontSize: '14px', color: '#666', margin: '4px 0' }}>
                     {minifig.fig_num}<br />
-                    Parts: {minifig.num_parts}<br />
+                    {minifig.num_parts && `Parts: ${minifig.num_parts}`}<br />
                     Quantity: {minifig.quantity}
                   </p>
                 </div>
