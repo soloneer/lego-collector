@@ -249,18 +249,20 @@ Live at: https://lego-collector-guide-34dy50l0i-andrew-molloys-projects.vercel.a
 
 ## 📋 Current Task List (Claude Context)
 
-### ✅ Completed Tasks
-- [x] Fixed missing minifig photos (now uses placeholder-minifig.jpg as final fallback)
-- [x] Hide "Parts:" label when no parts exist (shows "Sticker Book" instead)  
+### ✅ Implementation Completed
+- [x] Fixed missing minifig photos (placeholder-minifig.jpg fallback)
+- [x] Hide "Parts:" label when no parts exist (shows "Sticker Book")
 - [x] Set up GitHub Actions for automated daily data syncing
-- [x] Fixed critical bug in minifig image import (CSV column mapping: img_url vs fig_img_url)
+- [x] Fixed critical bug in minifig image import (CSV column: img_url vs fig_img_url)
+- [x] Updated importer for Supabase DATABASE_URL support
 
-### 🔄 In Progress
-- None
+### 🔄 Awaiting User Confirmation
+- [ ] **USER TEST**: Verify minifig photos now display correctly
+- [ ] **USER TEST**: Verify "Parts:" label hidden for 0-part items (shows "Sticker Book")
+- [ ] **USER TEST**: Run GitHub Actions workflow or manual data import
+- [ ] **USER TEST**: Confirm all fixes working in production
 
-### 📝 Pending Tasks  
-- [ ] Run data import to update minifig images in database
-- [ ] Test minifig image display in production
+### 📝 Pending Tasks
 - [ ] Add error handling for failed image loads in SetCard component
 - [ ] Implement local image caching strategy
 - [ ] Add analytics dashboard for affiliate link performance
