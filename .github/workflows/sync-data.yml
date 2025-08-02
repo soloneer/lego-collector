@@ -36,8 +36,6 @@ jobs:
         DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
         DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*postgres:\([^@]*\)@.*/\1/p')
         
-        echo "Original host: $DB_HOST"
-        
         # Try to use Supabase's IPv4-compatible connection pooler endpoint
         if [[ "$DB_HOST" == *"supabase.co" ]]; then
           # Extract project reference from hostname
@@ -45,7 +43,6 @@ jobs:
           POOLER_HOST="aws-0-us-west-1.pooler.supabase.com"
           
           echo "Using Supabase connection pooler for IPv4 compatibility"
-          echo "Project reference: $PROJECT_REF"
           
           # Create IPv4-compatible DATABASE_URL using connection pooler
           IPV4_DATABASE_URL="postgresql://postgres.${PROJECT_REF}:${DB_PASSWORD}@${POOLER_HOST}:5432/postgres"
