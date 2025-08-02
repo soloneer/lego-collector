@@ -28,30 +28,44 @@ jobs:
       env:
         CSV_SOURCE_URL: ${{ secrets.CSV_SOURCE_URL }}
 
-    - name: Debug network connectivity and get IPv4
+    - name: Configure database connection for IPv4
       run: |
-        echo "Testing DNS resolution..."
-        nslookup db.fxtiehnxxnlfaeccejqc.supabase.co || echo "DNS lookup failed"
+        echo "Configuring database connection for GitHub Actions IPv4 compatibility..."
         
-        echo "Getting IPv4 address..."
-        IPV4_ADDR=$(dig +short -4 db.fxtiehnxxnlfaeccejqc.supabase.co | head -1)
-        echo "IPv4 Address: $IPV4_ADDR"
+        # Extract database details from the original DATABASE_URL
+        DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
+        DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*postgres:\([^@]*\)@.*/\1/p')
         
-        if [ ! -z "$IPV4_ADDR" ]; then
-          echo "Testing IPv4 connectivity..."
-          ping -c 2 $IPV4_ADDR || echo "IPv4 ping failed"
+        echo "Original host: $DB_HOST"
+        
+        # Try to use Supabase's IPv4-compatible connection pooler endpoint
+        if [[ "$DB_HOST" == *"supabase.co" ]]; then
+          # Extract project reference from hostname
+          PROJECT_REF=$(echo "$DB_HOST" | sed 's/^db\.\([^.]*\)\.supabase\.co$/\1/')
+          POOLER_HOST="aws-0-us-west-1.pooler.supabase.com"
           
-          # Extract password from original DATABASE_URL and create IPv4-only version
-          PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*postgres:\([^@]*\)@.*/\1/p')
-          IPV4_DATABASE_URL="postgresql://postgres:$PASSWORD@$IPV4_ADDR:5432/postgres"
+          echo "Using Supabase connection pooler for IPv4 compatibility"
+          echo "Project reference: $PROJECT_REF"
+          
+          # Create IPv4-compatible DATABASE_URL using connection pooler
+          IPV4_DATABASE_URL="postgresql://postgres.${PROJECT_REF}:${DB_PASSWORD}@${POOLER_HOST}:5432/postgres"
           echo "DATABASE_URL_IPV4=$IPV4_DATABASE_URL" >> $GITHUB_ENV
-          echo "Using IPv4 DATABASE_URL"
+          echo "Successfully configured IPv4 database connection"
         else
-          echo "Could not resolve IPv4 address"
+          echo "Non-Supabase database detected, using original URL"
+          echo "DATABASE_URL_IPV4=$DATABASE_URL" >> $GITHUB_ENV
         fi
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
         
     - name: Import data to Supabase
-      run: npm run import-data
+      run: |
+        # Configure Node.js for IPv4 preference
+        export NODE_OPTIONS="--dns-result-order=ipv4first"
+        
+        # Try the import with IPv4 connection first
+        echo "Attempting database import with IPv4 connection..."
+        npm run import-data
       env:
         DATABASE_URL: ${{ env.DATABASE_URL_IPV4 || secrets.DATABASE_URL }}
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
