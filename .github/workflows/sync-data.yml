@@ -34,7 +34,6 @@ jobs:
         
         # Extract database details from the original DATABASE_URL
         DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
-        DB_PASSWORD=$(echo "$DATABASE_URL" | sed -n 's/.*postgres:\([^@]*\)@.*/\1/p')
         
         # Try to use Supabase's IPv4-compatible connection pooler endpoint
         if [[ "$DB_HOST" == *"supabase.co" ]]; then
@@ -43,9 +42,10 @@ jobs:
           POOLER_HOST="aws-0-us-west-1.pooler.supabase.com"
           
           echo "Using Supabase connection pooler for IPv4 compatibility"
+          echo "Project reference: $PROJECT_REF"
           
-          # Create IPv4-compatible DATABASE_URL using connection pooler
-          IPV4_DATABASE_URL="postgresql://postgres.${PROJECT_REF}:${DB_PASSWORD}@${POOLER_HOST}:5432/postgres"
+          # Create IPv4-compatible DATABASE_URL using connection pooler with service role key
+          IPV4_DATABASE_URL="postgresql://postgres.${PROJECT_REF}:${SUPABASE_SERVICE_ROLE_KEY}@${POOLER_HOST}:5432/postgres"
           echo "DATABASE_URL_IPV4=$IPV4_DATABASE_URL" >> $GITHUB_ENV
           echo "Successfully configured IPv4 database connection"
         else
@@ -54,6 +54,7 @@ jobs:
         fi
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         
     - name: Import data to Supabase
       run: |
